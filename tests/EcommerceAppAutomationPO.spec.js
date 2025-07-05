@@ -2,12 +2,14 @@ import test, { expect } from "@playwright/test";
 import LoginPage from "../PageObjects/LoginPagePO";
 import DashboardPO from "../PageObjects/DashboardPO";
 import Cart from "../PageObjects/CartPO";
+import Checkout from "../PageObjects/CheckoutPO";
+import OrderConfirmation from "../PageObjects/OrderConfirmationPO";
 
 test("E2E purchase product", async ({page}) => {
     
     const uid = "fnln112025@mail.com",
           pwd = "Password@1";
-    const productTitle_toPurchase = "ADIDAS ORIGINAL";
+    const productTitle_toPurchase = "ZARA COAT 3"; //ADIDAS ORIGINAL";
 
     const loginPage = new LoginPage(page);
     await loginPage.login(uid, pwd);
@@ -17,44 +19,13 @@ test("E2E purchase product", async ({page}) => {
     await dashboard.navigateToCart();
 
     const cart = new Cart(page);
-    await cart.validateProductinCart(productTitle_toPurchase, productPrice_toPurchase);
+    await cart.validateProductionCart(productTitle_toPurchase, productPrice_toPurchase);
     await cart.goToCheckout();
 
-    // let cart_title = await page.locator(".cart h3").textContent();
-    // let cart_price = await page.locator(".cart h3 + p").textContent();
-    
-    // console.log("cart_title.toLowerCase() - "+cart_title.toLowerCase());
-    // console.log("productTitle_toPurchase.toLowerCase() - "+productTitle_toPurchase.toLowerCase());
+    const checkout = new Checkout(page);
+    await checkout.validateProductDetails(productTitle_toPurchase,productPrice_toPurchase)
 
-    // expect(cart_title.toLowerCase()).toBe(productTitle_toPurchase.toLowerCase());
-    // expect(productPrice_toPurchase).toBe(cart_price.split(" ")[3]);
-    
-    // await page.locator("button:text('Checkout')").click();
-    // console.log("Page Title", await page.title());
-    
-    let checkout_title = await page.locator(".item__title").textContent();
-    expect(productTitle_toPurchase.toUpperCase()).toBe(checkout_title.trim().toUpperCase());
-    
-    let checkout_price = await page.locator(".item__price").textContent();
-    expect(productPrice_toPurchase).toBe(checkout_price.replaceAll("$ ", "").trim());
-
-    let countryDropdown = page.locator("[placeholder='Select Country']");
-    countryDropdown.fill("India");
-
-    try {
-        await page.locator("span[class='ng-star-inserted']").click();
-    } catch (error) {
-        console.log(error);
-    }
-    
-    await page.locator("a:text('Place Order')").click();
-
-    // Thankyou for the order. 
-
-    let thankYouHeader = await page.locator("h1").textContent();
-    expect(thankYouHeader.trim()).toBe("Thankyou for the order.");
-    expect(await page.locator("button:text('Click To Download Order Details in CSV')").isVisible()).toBeTruthy();
-
-    await page.locator("label[routerlink='/dashboard/myorders']").click();
+    const orderConfirmation = new OrderConfirmation(page);
+    await orderConfirmation.validateProductDetails(productTitle_toPurchase,productPrice_toPurchase);
 
 })

@@ -8,7 +8,7 @@ export default class Cart {
         this.checkoutbtn = page.locator("button:text('Checkout')");
     }
 
-    async validateProductinCart(productTitle_toPurchase, productPrice_toPurchase){
+    async validateProductionCart(productTitle_toPurchase, productPrice_toPurchase){
         let cart_title = await this.cartTitle.textContent();
         let cart_price = await this.cartPrice.textContent();
         
